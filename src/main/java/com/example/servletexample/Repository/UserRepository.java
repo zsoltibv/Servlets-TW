@@ -1,6 +1,7 @@
 package com.example.servletexample.Repository;
 
 import com.example.servletexample.DatabaseConnectionManager;
+import com.example.servletexample.enums.Role;
 import com.example.servletexample.model.User;
 import lombok.NoArgsConstructor;
 
@@ -14,12 +15,13 @@ public class UserRepository {
     private static final String SELECT_ALL_USERS = "SELECT * FROM users";
     private static final String INSERT_USER = "INSERT INTO users (email, password, role) VALUES (?, ?, ?)";
     private static final String SELECT_USER_BY_EMAIL_AND_PASSWORD = "SELECT * FROM users WHERE email = ? AND password = ?";
+    private static final String SELECT_STUDENTS = "SELECT * FROM users WHERE role = ?";
 
     private static Connection connection = null;
 
     public UserRepository() throws SQLException, ClassNotFoundException {
         // Initialize the database connection in the constructor
-        this.connection = DatabaseConnectionManager.getConnection();
+        connection = DatabaseConnectionManager.getConnection();
     }
 
     public static void addUser(User user) {
@@ -85,5 +87,31 @@ public class UserRepository {
         }
 
         return users;
+    }
+
+    public static List<User> getStudents() {
+        List<User> students = new ArrayList<>();
+
+        try (Connection connection = DatabaseConnectionManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SELECT_STUDENTS)) {
+
+            statement.setString(1, Role.STUDENT.toString());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Integer userId = resultSet.getInt("id");
+                    String userEmail = resultSet.getString("email");
+                    String userPassword = resultSet.getString("password");
+
+                    User student = new User(userId, userEmail, userPassword, Role.STUDENT.toString());
+                    students.add(student);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace(); // Handle exceptions appropriately
+            throw new RuntimeException(e);
+        }
+
+        return students;
     }
 }

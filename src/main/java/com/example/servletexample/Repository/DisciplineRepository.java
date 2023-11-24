@@ -2,6 +2,7 @@ package com.example.servletexample.Repository;
 
 import com.example.servletexample.DatabaseConnectionManager;
 import com.example.servletexample.model.Discipline;
+import com.example.servletexample.model.Grade;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.List;
 
 public class DisciplineRepository {
     private final Connection connection;
+    private static List<Discipline> disciplines = new ArrayList<>();
+    private static List<Grade> grades = new ArrayList<>();
 
     public DisciplineRepository() throws SQLException, ClassNotFoundException {
         // Initialize the database connection in the constructor
@@ -102,5 +105,20 @@ public class DisciplineRepository {
         }
 
         return disciplines;
+    }
+
+    public List<Grade> getGradesByDiscipline(int disciplineId) {
+        List<Grade> gradesForDiscipline = new ArrayList<>();
+        for (Grade grade : grades) {
+            if (grade.getDisciplineId() == disciplineId) {
+                gradesForDiscipline.add(grade);
+            }
+        }
+        return gradesForDiscipline;
+    }
+
+    public void addGrade(Grade grade) {
+        // Add the grade to the list
+        grades.add(grade);
     }
 }

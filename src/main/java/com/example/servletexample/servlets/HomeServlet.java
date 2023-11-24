@@ -1,9 +1,11 @@
 package com.example.servletexample.servlets;
 
 import com.example.servletexample.Repository.DisciplineRepository;
+import com.example.servletexample.Repository.GradeRepository;
 import com.example.servletexample.Repository.UserRepository;
 import com.example.servletexample.enums.Role;
 import com.example.servletexample.model.Discipline;
+import com.example.servletexample.model.Grade;
 import com.example.servletexample.model.User;
 
 import javax.servlet.*;
@@ -13,11 +15,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet(name = "HomeServlet", value = "/homeServlet")
+@WebServlet(name = "HomeServlet", value = "/homeServlet/*")
 public class HomeServlet extends HttpServlet {
     private final UserRepository userRepository;
+    private final GradeRepository gradeRepository;
 
     public HomeServlet() throws SQLException, ClassNotFoundException {
+        this.gradeRepository = new GradeRepository();
         this.userRepository = new UserRepository();
     }
 
@@ -25,6 +29,8 @@ public class HomeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("currentUser");
+
+        List<User> students = UserRepository.getStudents();
 
         System.out.println(currentUser);
 
@@ -43,6 +49,7 @@ public class HomeServlet extends HttpServlet {
                 System.out.println(teacherDisciplines);
 
                 request.setAttribute("teacherDisciplines", teacherDisciplines);
+                request.setAttribute("students", students);
                 getServletContext().getRequestDispatcher("/jsp/home.jsp").forward(request, response);
             } else {
                 // The user is a student, you can add student-specific logic or leave it empty
@@ -52,6 +59,35 @@ public class HomeServlet extends HttpServlet {
             // Handle the case where the user is not logged in
             response.sendRedirect(request.getContextPath() + "/login");
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        System.out.println("shit");
+        if ("giveGrade".equals(action)) {
+            giveGrade(request, response);
+        }
+    }
+
+    private void giveGrade(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int disciplineId = Integer.parseInt(request.getParameter("disciplineId"));
+        int studentId = Integer.parseInt(request.getParameter("studentId"));
+        int value = Integer.parseInt(request.getParameter("value"));
+
+        // You may want to perform validation on the inputs before proceeding
+
+        // Create a Grade object with the submitted data
+        Grade grade = new Grade();
+        grade.setDisciplineId(disciplineId);
+        grade.setStudentId(studentId);
+        grade.setValue(value);
+
+        // Save the grade to the database
+        gradeRepository.addGrade(grade);
+
+        response.sendRedirect(request.getContextPath() + "/homeServlet");
+
     }
 }
 

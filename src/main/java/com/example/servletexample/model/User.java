@@ -4,9 +4,6 @@ import com.example.servletexample.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Objects;
-import java.util.UUID;
-
 @Data
 @AllArgsConstructor
 public class User {

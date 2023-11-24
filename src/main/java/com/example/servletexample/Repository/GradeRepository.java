@@ -16,13 +16,15 @@ public class GradeRepository {
     }
 
     public void addGrade(Grade grade) {
+        System.out.println(grade);
         String sql = "INSERT INTO grades (student_id, discipline_id, value, date) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, grade.getStudentId());
             preparedStatement.setInt(2, grade.getDisciplineId());
             preparedStatement.setInt(3, grade.getValue());
-            preparedStatement.setDate(4, Date.valueOf(grade.getDate()));
+            java.util.Date currentDate = new java.util.Date();
+            preparedStatement.setDate(4, new Date(currentDate.getTime()));
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
