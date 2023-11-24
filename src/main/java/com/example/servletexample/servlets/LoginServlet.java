@@ -10,13 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
 
 @WebServlet(name = "IndexServlet", urlPatterns = {"/","/login/*"})
 public class LoginServlet extends HttpServlet {
     private final UserRepository userRepository;
-    public LoginServlet(){
+    public LoginServlet() throws SQLException, ClassNotFoundException {
         this.userRepository = new UserRepository();
     }
 
@@ -34,7 +35,7 @@ public class LoginServlet extends HttpServlet {
             getServletContext().getRequestDispatcher("/jsp/login.jsp").forward(request, response);
         }
         else {
-            getServletContext().getRequestDispatcher("/homeServlet").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/homeServlet");
         }
     }
 
@@ -43,16 +44,20 @@ public class LoginServlet extends HttpServlet {
         userRepository.getUsers().forEach(System.out::println);
 
         HttpSession session = request.getSession();
-        User currentUser = (User) session.getAttribute("currentUser");
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         Optional<User> userByEmailAndPassword = userRepository.findUserByEmailAndPassword(email, password);
-        if (userByEmailAndPassword.isPresent())
-            getServletContext().getRequestDispatcher("/jsp/home.jsp").forward(request, response);
-        else {
-            /* Otherwise, reload the form  */
+        if (userByEmailAndPassword.isPresent()) {
+            // Set the current user in the session
+            User currentUser = userByEmailAndPassword.get();
+            session.setAttribute("currentUser", currentUser);
+
+            // Redirect to HomeServlet after successful login
+            response.sendRedirect(request.getContextPath() + "/homeServlet");
+        } else {
+            // Otherwise, reload the login form
             getServletContext().getRequestDispatcher("/jsp/login.jsp").forward(request, response);
         }
     }

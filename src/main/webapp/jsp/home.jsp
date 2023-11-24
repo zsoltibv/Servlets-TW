@@ -1,4 +1,7 @@
-<%--
+<%@ page import="com.example.servletexample.model.Discipline" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.example.servletexample.model.User" %>
+<%@ page import="com.example.servletexample.enums.Role" %><%--
   Created by IntelliJ IDEA.
   User: Ritan
   Date: 10/15/2022
@@ -15,7 +18,16 @@
 
 <body>
 <div>
-    <h1>YOU ARE ON HOMEPAGE YAY! </h1>
+    <h1>shit</h1>
+    <%-- Check if the user is a teacher to display the list of disciplines --%>
+    <% if (session.getAttribute("currentUser") != null && ((User) session.getAttribute("currentUser")).getRole() == Role.TEACHER) { %>
+    <h2>Your Disciplines:</h2>
+    <ul>
+        <% for (Discipline discipline : (List<Discipline>) request.getAttribute("teacherDisciplines")) { %>
+        <li><%= discipline.getName() %></li>
+        <% } %>
+    </ul>
+    <% } %>
 </div>
 </body>
 </html>
