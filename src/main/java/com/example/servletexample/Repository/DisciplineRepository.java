@@ -121,4 +121,23 @@ public class DisciplineRepository {
         // Add the grade to the list
         grades.add(grade);
     }
+
+    public String getDisciplineName(int disciplineId) {
+        String disciplineName = null;
+        String sql = "SELECT name FROM disciplines WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, disciplineId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    disciplineName = resultSet.getString("name");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return disciplineName;
+    }
 }

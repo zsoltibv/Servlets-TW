@@ -19,10 +19,14 @@ import java.util.List;
 public class HomeServlet extends HttpServlet {
     private final UserRepository userRepository;
     private final GradeRepository gradeRepository;
+    private final DisciplineRepository disciplineRepository;
+    List<Discipline> teacherDisciplines;
+    List<User> students;
 
     public HomeServlet() throws SQLException, ClassNotFoundException {
         this.gradeRepository = new GradeRepository();
         this.userRepository = new UserRepository();
+        this.disciplineRepository = new DisciplineRepository();
     }
 
     @Override
@@ -30,7 +34,7 @@ public class HomeServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("currentUser");
 
-        List<User> students = UserRepository.getStudents();
+        students = UserRepository.getStudents();
 
         System.out.println(currentUser);
 
@@ -45,7 +49,7 @@ public class HomeServlet extends HttpServlet {
                 } catch (SQLException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-                List<Discipline> teacherDisciplines = disciplineRepository.getDisciplinesByProfessor(teacherId);
+                teacherDisciplines = disciplineRepository.getDisciplinesByProfessor(teacherId);
                 System.out.println(teacherDisciplines);
 
                 request.setAttribute("teacherDisciplines", teacherDisciplines);
@@ -64,9 +68,12 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        System.out.println("shit");
+
         if ("giveGrade".equals(action)) {
             giveGrade(request, response);
+        } else if ("showGrades".equals(request.getParameter("action"))) {
+            System.out.println("show grades");
+            showGrades(request, response);
         }
     }
 
@@ -87,7 +94,26 @@ public class HomeServlet extends HttpServlet {
         gradeRepository.addGrade(grade);
 
         response.sendRedirect(request.getContextPath() + "/homeServlet");
+    }
 
+    private void showGrades(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Retrieve selected student and discipline IDs
+        int selectedStudentId = Integer.parseInt(request.getParameter("studentId"));
+        int selectedDisciplineId = Integer.parseInt(request.getParameter("disciplineId"));
+
+        // Retrieve grades based on the selected student and discipline
+        List<Grade> grades = gradeRepository.getGradesByStudentAndDiscipline(selectedStudentId, selectedDisciplineId);
+
+        System.out.println(grades);
+
+        // Set the grades attribute in the request
+        request.setAttribute("grades", grades);
+        request.setAttribute("teacherDisciplines", teacherDisciplines);
+        request.setAttribute("students", students);
+        request.setAttribute("disciplineName", disciplineRepository.getDisciplineName(selectedDisciplineId));
+
+        // Forward to the same JSP page
+        request.getRequestDispatcher("/jsp/home.jsp").forward(request, response);
     }
 }
 

@@ -35,7 +35,7 @@
             <% } %>
 
             <form action="/homeServlet" method="POST" class="mt-8 space-y-4">
-                <input type="hidden" name="action" value="giveGrade">
+
 
                 <!-- Select Discipline -->
                 <div>
@@ -70,12 +70,33 @@
 
                 <!-- Submit Button -->
                 <div>
-                    <button type="submit"
+                    <button type="submit" name="action" value="giveGrade"
                             class="px-4 py-2 text-white bg-indigo-500 rounded-md hover:bg-indigo-600 focus:outline-none focus:ring focus:border-indigo-300 active:bg-indigo-800">
                         Give Grade
                     </button>
+
+                    <button type="submit" name="action" value="showGrades"
+                            class="px-4 py-2 mt-4 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300 active:bg-blue-800">
+                        Show Grades
+                    </button>
                 </div>
             </form>
+
+            <div class="mt-4">
+                <%-- Check if grades are available in the request and display them --%>
+                <% List<Grade> grades = (List<Grade>) request.getAttribute("grades");
+                    if (grades != null && !grades.isEmpty()) { %>
+                <h3>Grades:</h3>
+                <ul>
+                    <% for (Grade grade : grades) { %>
+                    <li>Discipline: <%= request.getAttribute("disciplineName") %>, Grade: <%= grade.getValue() %>
+                    </li>
+                    <% } %>
+                </ul>
+                <% } else { %>
+                <p>No grades available for the selected student and discipline.</p>
+                <% } %>
+            </div>
 
         </div>
     </div>

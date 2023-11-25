@@ -81,4 +81,31 @@ public class GradeRepository {
 
         return grades;
     }
+
+    public List<Grade> getGradesByStudentAndDiscipline(int studentId, int disciplineId) {
+        List<Grade> grades = new ArrayList<>();
+        String sql = "SELECT * FROM grades WHERE student_id = ? AND discipline_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, studentId);
+            preparedStatement.setInt(2, disciplineId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Grade grade = new Grade();
+                    grade.setId(resultSet.getInt("id"));
+                    grade.setStudentId(resultSet.getInt("student_id"));
+                    grade.setDisciplineId(resultSet.getInt("discipline_id"));
+                    grade.setValue(resultSet.getInt("value"));
+                    grade.setDate(resultSet.getDate("date").toLocalDate());
+
+                    grades.add(grade);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return grades;
+    }
 }
