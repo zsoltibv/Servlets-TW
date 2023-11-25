@@ -83,6 +83,21 @@
                     </button>
                 </div>
             </form>
+            <div class="mt-4">
+                <%-- Check if grades are available in the request and display them --%>
+                <% List<Grade> grades = (List<Grade>) request.getAttribute("grades");
+                    if (grades != null && !grades.isEmpty()) { %>
+                <h3>Grades:</h3>
+                <ul>
+                    <% for (Grade grade : grades) { %>
+                    <li>Discipline: <%= request.getAttribute("disciplineName") %>, Grade: <%= grade.getValue() %>
+                    </li>
+                    <% } %>
+                </ul>
+                <% } else { %>
+                <p>No grades available for the selected student and discipline.</p>
+                <% } %>
+            </div>
             <% } else if (currentUser.getRole() == Role.STUDENT) { %>
             <h2 class="text-2xl font-bold mb-4">Your Grades:</h2>
             <div class="mt-4">
