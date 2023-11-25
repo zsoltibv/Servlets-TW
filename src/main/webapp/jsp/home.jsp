@@ -2,7 +2,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.example.servletexample.model.User" %>
 <%@ page import="com.example.servletexample.enums.Role" %>
-<%@ page import="com.example.servletexample.model.Grade" %><%--
+<%@ page import="com.example.servletexample.model.Grade" %>
+<%@ page import="com.example.servletexample.Repository.DisciplineRepository" %><%--
   Created by IntelliJ IDEA.
   User: Ritan
   Date: 10/15/2022
@@ -107,7 +108,7 @@
                 <h3>Grades:</h3>
                 <ul>
                     <% for (Grade grade : grades) { %>
-                    <li>Discipline: <%= grade.getDisciplineId() %>, Grade: <%= grade.getValue() %>
+                    <li>Discipline: <%= getDisciplineName(grade.getDisciplineId()) %>, Grade: <%= grade.getValue() %>
                     </li>
                     <% } %>
                 </ul>
@@ -117,6 +118,18 @@
             </div>
             <% }
             } %>
+
+                <%!
+                    private String getDisciplineName(int disciplineId) {
+                        try {
+                            DisciplineRepository disciplineRepository = new DisciplineRepository();
+                            return disciplineRepository.getDisciplineName(disciplineId);
+                        } catch (Exception e) {
+                            e.printStackTrace(); // Handle the exception properly in a production environment
+                            return "Unknown Discipline";
+                        }
+                    }
+                %>
 
         </div>
     </div>
