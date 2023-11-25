@@ -74,6 +74,15 @@ public class HomeServlet extends HttpServlet {
         } else if ("showGrades".equals(request.getParameter("action"))) {
             System.out.println("show grades");
             showGrades(request, response);
+        }else if ("logout".equals(request.getParameter("action"))) {
+            HttpSession session = request.getSession();
+            session.removeAttribute("currentUser");
+
+            // Invalidate the current session
+            session.invalidate();
+
+            // Redirect to the login page or any other desired page after logout
+            response.sendRedirect(request.getContextPath() + "/homeServlet");
         }
     }
 

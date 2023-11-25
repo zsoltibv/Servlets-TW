@@ -21,6 +21,13 @@
 <div>
     <div class="w-screen h-screen flex justify-center items-center
             bg-gradient-to-br from-purple-700 to-amber-700">
+        <!-- Logout Button -->
+        <form action="/logout" name="action" value="logout" method="POST">
+            <button type="submit" class="absolute top-4 right-4 px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:ring focus:border-red-300 active:bg-red-800">
+                Logout
+            </button>
+        </form>
+
         <div class="p-10 bg-white rounded-xl drop-shadow-lg space-y-5 w-96">
 
             <%-- Check if the user is a teacher to display the list of disciplines --%>

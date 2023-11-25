@@ -30,15 +30,15 @@
                            placeholder="Repeat Password" name="repeat_password" id="repeat_password">
                 </div>
 
+                <div class="flex items-center space-x-2 space-y-2">
+                    <input type="checkbox" name="isTeacher" id="isTeacher" class="text-blue-500" />
+                    <label class="text-sm font-light" for="isTeacher">Are you a teacher?</label>
+                </div>
+
                 <button class="w-full px-10 py-2 bg-blue-600 text-white rounded-md space-y-2
                         hover:bg-blue-500 hover:drop-shadow-md duration-300 ease-in" type="submit">
                     Register
                 </button>
-
-                <div class="flex items-center space-x-2">
-                    <input type="checkbox" name="isTeacher" id="isTeacher" class="text-blue-500" />
-                    <label class="text-sm font-light" for="isTeacher">Are you a teacher?</label>
-                </div>
             </form>
 
             <form action="/login" method="GET">
