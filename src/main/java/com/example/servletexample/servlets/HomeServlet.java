@@ -56,6 +56,9 @@ public class HomeServlet extends HttpServlet {
                 request.setAttribute("students", students);
                 getServletContext().getRequestDispatcher("/jsp/home.jsp").forward(request, response);
             } else {
+                List<Grade> studentGrades = gradeRepository.getGradesByStudent(currentUser.id);
+
+                request.setAttribute("studentGrades", studentGrades);
                 // The user is a student, you can add student-specific logic or leave it empty
                 getServletContext().getRequestDispatcher("/jsp/home.jsp").forward(request, response);
             }
